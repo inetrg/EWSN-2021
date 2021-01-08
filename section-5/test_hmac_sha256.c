@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2020 HAW Hamburg
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     examples
+ * @{
+ *
+ * @file
+ * @brief       Application to measure hmac-sha256 runtime
+ *
+ * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
+ *
+ * @}
+ */
+
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "hashes/sha256.h"
+
+#include "periph/gpio.h"
+
+#include "xtimer.h"
+
+#if defined(HMAC)
+
+#ifdef INPUT_512
+    static unsigned char HMAC_INPUT[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+    static size_t HMAC_INPUT_SIZE = 512;
+#else
+    static char HMAC_INPUT[] = {
+        0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20,
+        0x61, 0x20, 0x74, 0x65, 0x73, 0x74, 0x73, 0x74,
+        0x72, 0x69, 0x6e, 0x67, 0x20, 0x66, 0x6f, 0x72,
+        0x20, 0x68, 0x6d, 0x61, 0x63, 0x32, 0x35, 0x36
+    };
+    size_t HMAC_INPUT_SIZE = 32;
+#endif /* INPUT_512 */
+
+    static uint8_t HMAC_KEY[] = {
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+        0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b
+    };
+#ifdef HMAC_64
+    size_t KEY_SIZE = 64;
+#else
+    size_t KEY_SIZE = 32;
+#endif
+
+#ifdef INPUT_512
+#ifdef HMAC_64
+    /* Expected result 64 Byte key, 512 Byte Input */
+    static uint8_t EXPECTED_RESULT[] = {
+        0xa1, 0x7f, 0x58, 0x90, 0xf8, 0x76, 0xd1, 0xb5,
+        0xb4, 0xaa, 0x5e, 0xf2, 0x8f, 0xad, 0xd4, 0x55,
+        0x24, 0xb0, 0x69, 0xe2, 0x42, 0x07, 0x6a, 0x91,
+        0x1b, 0x73, 0x57, 0xe5, 0x6e, 0xff, 0x20, 0x51
+    };
+#else
+    /* Expected result 32 Byte key, 512 Byte Input */
+    static uint8_t EXPECTED_RESULT[] = {
+       0x61, 0xdc, 0x98, 0xc4, 0xaa, 0xa5, 0xab, 0xa6,
+       0x3a, 0x54, 0xc7, 0xaa, 0xe8, 0x56, 0xbc, 0xd3,
+       0x9d, 0x3e, 0xc4, 0x5e, 0x7c, 0x71, 0xe2, 0x9f,
+       0x5f, 0x51, 0x18, 0x6f, 0x39, 0x5b, 0xac, 0xef
+    };
+#endif /* HMAC_64 */
+
+#else
+#ifdef HMAC_64
+    /* Expected result 64 Byte key, 32 Byte Input */
+    static uint8_t EXPECTED_RESULT[] = {
+        0x39, 0x38, 0x66, 0x75, 0xdc, 0xc9, 0xe1, 0x86,
+        0x58, 0xac, 0xfe, 0x34, 0x05, 0x79, 0xe5, 0x1b,
+        0x20, 0x02, 0x8d, 0xc6, 0x3c, 0x70, 0xaf, 0x80,
+        0xe5, 0x2d, 0xe4, 0x22, 0x7a, 0x41, 0x0c, 0x70
+    };
+#else
+    /* Expected result 32 Byte key, 32 Byte Input */
+    static uint8_t EXPECTED_RESULT[] = {
+        0xae, 0xd3, 0x6c, 0x93, 0x74, 0xe0, 0xac, 0x31,
+        0xd8, 0x69, 0x55, 0x1e, 0xf9, 0x41, 0xad, 0x17,
+        0xcc, 0xe9, 0xea, 0xd0, 0x0b, 0xd2, 0x6b, 0xf4,
+        0xbc, 0x21, 0x03, 0xba, 0xaa, 0xaa, 0x0a, 0xb6
+};
+#endif /* HMAC_64 */
+#endif
+    void hmac_sha256_test(gpio_t active_gpio)
+    {
+        uint8_t hmac_result[SHA256_DIGEST_LENGTH];
+        hmac_context_t ctx;
+        xtimer_sleep(1);
+        for(int i=0;i<TEST_ENERGY_ITER;i++) {
+            printf("Iteration %i/%i\n", i, TEST_ENERGY_ITER);
+            gpio_set(active_gpio);
+            hmac_sha256_init(&ctx, HMAC_KEY, KEY_SIZE);
+            gpio_clear(active_gpio);
+
+            gpio_set(active_gpio);
+            hmac_sha256_update(&ctx, HMAC_INPUT, HMAC_INPUT_SIZE );
+            gpio_clear(active_gpio);
+
+            gpio_set(active_gpio);
+            hmac_sha256_final(&ctx, hmac_result);
+            gpio_clear(active_gpio);
+
+            if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
+                printf("HMAC SHA-256 Failure\n");
+            }
+            else {
+                printf("HMAC SHA-256 Success\n");
+            }
+        }
+    }
+#endif /* HMAC */
