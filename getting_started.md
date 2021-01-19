@@ -1,6 +1,12 @@
 ### How to build and execute applications in RIOT
 
-1. Navigate to an application folder. The applications are organized according to the sections of the paper: [section-4](section-4/), [section-5](section-5/), [section-6](section-6/), [section-7](section-7/). Please note that some folders contain subfolders. To proceed, navigate to the specific experiment of interest.
+1. Navigate to an application folder. The applications are organized according to the sections of the paper: 
+   * [Section 4: The Impact of a Software Implementation](section-4/), 
+   * [Section 5: Basic Crypto-Hardware Acceleration](section-5/), 
+   * [Section 6: ECC Hardware Acceleration](section-6/), 
+   * [Section 7: The Impact of Driver Implementations](section-7/). 
+   
+   Please note that some folders contain subfolders. To proceed, navigate to the specific experiment of interest.
 2. To compile an application, you will need to use *make* and specify the target board:
 
     `BOARD=<target board> make`
