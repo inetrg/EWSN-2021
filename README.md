@@ -15,7 +15,7 @@ In: International Conference on Embedded Wireless Systems and Networks (EWSN), A
 Please follow our [Getting Started](getting_started.md) instructions for further information how to compile and execute the code.
 
 <!-- TODO: update URLs -->
-[paper-link]:https://github.com/inetrg/EWSN-2021
+[paper-link]:https://dl.acm.org/doi/10.5555/3451271.3451279
 [preprint-link]:https://eprint.iacr.org/2021/058
 [paper-badge]: https://img.shields.io/badge/Paper-ACM%20DL-green
 [preprint-badge]: https://img.shields.io/badge/Preprint-IACR-green
