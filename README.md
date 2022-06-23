@@ -2,6 +2,7 @@
 
 [![Paper][paper-badge]][paper-link]
 [![Preprint][preprint-badge]][preprint-link]
+[![Video][video-badge]][video-link]
 
 This repository contains code and documentation to reproduce experimental results of the paper **"[A Performance Study of Crypto-Hardware in the Low-end IoT][preprint-link]"** published in Proc. of the EWSN Conference 2021.
 
@@ -17,5 +18,7 @@ Please follow our [Getting Started](getting_started.md) instructions for further
 <!-- TODO: update URLs -->
 [paper-link]:https://dl.acm.org/doi/10.5555/3451271.3451279
 [preprint-link]:https://eprint.iacr.org/2021/058
+[video-link]:https://youtu.be/Aqp-AassudM
 [paper-badge]: https://img.shields.io/badge/Paper-ACM%20DL-green
 [preprint-badge]: https://img.shields.io/badge/Preprint-IACR-green
+[video-badge]:https://img.shields.io/youtube/views/tJRfUUsuqyQ?style=social
