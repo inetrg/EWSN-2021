@@ -21,4 +21,4 @@ Please follow our [Getting Started](getting_started.md) instructions for further
 [video-link]:https://youtu.be/Aqp-AassudM
 [paper-badge]: https://img.shields.io/badge/Paper-ACM%20DL-green
 [preprint-badge]: https://img.shields.io/badge/Preprint-IACR-green
-[video-badge]:https://img.shields.io/youtube/views/tJRfUUsuqyQ?style=social
+[video-badge]:https://img.shields.io/youtube/views/Aqp-AassudM?style=social
